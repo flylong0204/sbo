@@ -150,6 +150,9 @@ if [ "$DISABLE_JAVA" = "YES" ]; then
   chmod -x $PKG/opt/libreoffice$SRCSHORT/program/javaldx
 fi
 
+# Install an enhanced senddoc script, that handles mutt(1) better
+cat $CWD/senddoc > $PKG/opt/libreoffice$SRCSHORT/program/senddoc
+
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh

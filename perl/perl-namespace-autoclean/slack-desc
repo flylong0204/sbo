@@ -13,7 +13,7 @@ perl-namespace-autoclean: at the end of the current package's compile cycle. Fun
 perl-namespace-autoclean: called in the package itself will still be bound by their name,
 perl-namespace-autoclean: but they won't show up as methods on your class or instances.
 perl-namespace-autoclean:
-perl-namespace-autoclean: Homepage: http://search.cpan.org/dist/namespace-autoclean/
+perl-namespace-autoclean: Homepage: https://metacpan.org/pod/namespace::autoclean
 perl-namespace-autoclean:
 perl-namespace-autoclean:
 perl-namespace-autoclean:

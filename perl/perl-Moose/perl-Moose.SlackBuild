@@ -1,7 +1,7 @@
 #!/bin/sh
 
 PRGNAM=perl-Moose
-VERSION=${VERSION:-2.1401}
+VERSION=${VERSION:-2.1402}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 

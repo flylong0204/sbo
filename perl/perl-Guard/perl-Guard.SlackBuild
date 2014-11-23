@@ -1,7 +1,7 @@
 #!/bin/sh
 
 PRGNAM=perl-Guard
-VERSION=${VERSION:-1.022}
+VERSION=${VERSION:-1.023}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 

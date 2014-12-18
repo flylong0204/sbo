@@ -30,10 +30,7 @@ VERSION=${VERSION:-0.013}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 
-SRCNAM=Test-Warnings
-
 SRCNAM="$(printf $PRGNAM | cut -d- -f2-)"
->>>>>>> Add more insane perl dependencies...
 
 if [ -z "$ARCH" ]; then
   case "$( uname -m )" in

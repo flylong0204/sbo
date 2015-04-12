@@ -26,7 +26,7 @@
 # Slackware build script for python-kerberos
 
 PRGNAM=python-kerberos
-VERSION=${VERSION:-1.1.5}
+VERSION=${VERSION:-1.2.2}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 
@@ -59,7 +59,7 @@ else
   LIBDIRSUFFIX=""
 fi
 
-DISTNAME=pykerberos
+DISTNAME=kerberos
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP

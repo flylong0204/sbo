@@ -1,34 +1,40 @@
 #!/bin/sh
 # Start/stop/restart opensmtpd
 
+DAEMON=/usr/sbin/smtpd 
+CTL=/usr/sbin/smtpctl
+
 smtpd_start() {
-  if [ -x /usr/sbin/smtpd ]; then
-    echo "Starting OpenSMTPD:  /usr/sbin/smtpd"
-    /usr/sbin/smtpd
-  fi
+	if [ -x ${DAEMON} ]; then
+		echo "Starting OpenSMTPD ..."
+		${DAEMON}
+	else
+		exit 1
+	fi
 }
 
 smtpd_stop() {
-  /usr/sbin/smtpctl stop  ||  pkill smtpd
-}
-
-# Restart smtpd:
-smtpd_restart() {
-  smtpd_stop
-  sleep 1
-  smtpd_start
+	if [ -x ${CTL} ]; then
+		echo -n "Stopping OpenSMTPD: "
+		${CTL} stop 
+	else
+		exit 1
+	fi
 }
 
 case "$1" in
-'start')
-  smtpd_start
-  ;;
-'stop')
-  smtpd_stop
-  ;;
-'restart')
-  smtpd_restart
-  ;;
-*)
-  echo "usage $0 start|stop|restart"
+	start)
+		smtpd_start
+	;;
+	stop)
+		smtpd_stop
+	;;
+	restart)
+		smtpd_stop
+		sleep 1
+		smtpd_start
+	;;
+	*)
+		echo "$0 <start|stop|restart>"
+	;;
 esac

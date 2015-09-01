@@ -6,7 +6,7 @@
 # Written by LEVAI Daniel
 
 PRGNAM=perl-Devel-OverloadInfo
-VERSION=${VERSION:-0.002}
+VERSION=${VERSION:-0.004}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 

@@ -81,6 +81,7 @@ make install DESTDIR=$PKG
 
 strip --strip-unneeded $PKG/bin/pdksh
 gzip -9 $PKG/usr/man/man1/pdksh.1
+gzip -9 $PKG/usr/man/man1/pdksh-sh.1
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a \

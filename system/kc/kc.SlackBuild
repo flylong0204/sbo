@@ -115,7 +115,7 @@ if [ -n "${EDITLINE}" ];then
 	EDITLINE="EDITLINE=y"
 fi
 
-CFLAGS="$SLKCFLAGS" make -f Makefile.linux HAVE_PCRE=y "${LIBSCRYPT}" "${EDITLINE}"
+CFLAGS="$SLKCFLAGS" make -f Makefile.linux HAVE_PCRE=y ${LIBSCRYPT} ${EDITLINE}
 make -f Makefile.linux install DESTDIR=$PKG PREFIX=/usr
 
 strip --strip-unneeded $PKG/usr/bin/kc

@@ -1,0 +1,2 @@
+This module has only one function, which a new name to referenced sub. If
+package specification is omitted in the name, then the current package is used.

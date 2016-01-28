@@ -1,0 +1,14 @@
+--- Makefile.in.orig	2013-10-16 20:09:59.615475902 +0200
++++ Makefile.in	2013-10-16 20:10:18.155202575 +0200
+@@ -40,7 +40,7 @@ distclean: clean
+ 	rm -f Makefile config.h
+ 
+ install: $(PRODUCT)
+-	$(INSTALL) -d -m 755 $(bindir)
+-	$(INSTALL) -s -m 755 $(PRODUCT) $(bindir)
+-	$(INSTALL) -d -m 755 $(mandir)/man1
+-	$(INSTALL) -m 644 $(PRODUCT).1 $(mandir)/man1
++	$(INSTALL) -d -m 755 $(DESTDIR)/$(bindir)
++	$(INSTALL) -s -m 755 $(PRODUCT) $(DESTDIR)/$(bindir)
++	$(INSTALL) -d -m 755 $(DESTDIR)/$(mandir)/man1
++	$(INSTALL) -m 644 $(PRODUCT).1 $(DESTDIR)/$(mandir)/man1

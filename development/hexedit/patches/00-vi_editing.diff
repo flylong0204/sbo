@@ -1,0 +1,366 @@
+--- interact.c.orig	2005-11-08 17:16:47.000000000 +0100
++++ interact.c	2013-10-17 12:30:44.606536137 +0200
+@@ -342,80 +342,75 @@ int key_to_function(int key)
+   switch (key) 
+     {
+     case KEY_RIGHT:
+-    case CTRL('F'):
++    case 'l':
+       forward_char();
+       break;
+ 
+     case KEY_LEFT:
+-    case CTRL('B'):
++    case 'h':
+       backward_char();
+       break;
+ 
+     case KEY_DOWN:
+-    case CTRL('N'):
++    case 'j':
+       next_line();
+       break;
+ 
+     case KEY_UP:
+-    case CTRL('P'):
++    case 'k':
+       previous_line();
+       break;
+ 
+-    case ALT('F'):
++    case 'W':
+       forward_chars();
+       break;
+ 
+-    case ALT('B'):
++    case 'B':
+       backward_chars();
+       break;
+ 
+-    case ALT('N'):
++    case CTRL('N'):
+       next_lines();
+       break;
+ 
+-    case ALT('P'):
++    case CTRL('P'):
+       previous_lines();
+       break;
+ 
+     case CTRL('A'):
+-    case KEY_HOME:
++    case '^':
++    case '|':
+       beginning_of_line();
+       break;
+ 
+     case CTRL('E'):
+-    case KEY_END:
++    case '$':
+       end_of_line();
+       break;
+ 
+     case KEY_NPAGE:
+-    case CTRL('V'):
+-    case KEY_F(6):
++    case CTRL('D'):
+       scroll_up();
+       break;
+ 
+     case KEY_PPAGE:
+-    case ALT('V'):
+-    case KEY_F(5):
++    case CTRL('U'):
+       scroll_down();
+       break;
+ 
+-    case '<':
+-    case ALT('<'):
++    case 'g':
+       beginning_of_buffer();
+       break;
+ 
+-    case '>':
+-    case ALT('>'):
++    case 'G':
+       end_of_buffer();
+       break;
+ 
+-    case KEY_SUSPEND:
+     case CTRL('Z'):
+       suspend();
+       break;
+ 
+-    case CTRL('U'):
+-    case CTRL('_'):
++    case 'U':
+       undo();
+       break;
+ 
+@@ -423,17 +418,17 @@ int key_to_function(int key)
+       quoted_insert();
+       break;
+ 
+-    case CTRL('T'):
+     case '\t':
+       toggle();
+       break;
+ 
+     case '/':
+-    case CTRL('S'):
++    case 'n':
+       search_forward();
+       break;
+ 
+-    case CTRL('R'):
++    case '?':
++    case 'N':
+       search_backward();
+       break;
+ 
+@@ -442,10 +437,6 @@ int key_to_function(int key)
+       goto_char();
+       break;
+ 
+-    case ALT('L'):
+-      recenter();
+-      break;
+-
+     case '\n':
+     case '\r':
+     case KEY_ENTER:
+@@ -462,7 +453,6 @@ int key_to_function(int key)
+       break;
+ 
+     case KEY_F(1):
+-    case ALT('H'):
+       help();
+       break;
+ 
+@@ -475,60 +465,51 @@ int key_to_function(int key)
+       redisplay();
+       break;
+ 
+-    case CTRL('H'):
+-    case KEY_BACKSPACE:
++    case 'u':
+       delete_backward_char();
+       break;
+ 
+-    case CTRL('H') | 0x80: /* CTRL-ALT-H */
+-      delete_backward_chars();
+-      break;
+-
+-    case CTRL(' '):
++    case 'v':
+     case KEY_F(9):
+       set_mark_command();
+       break;
+ 
+-    case CTRL('D'):
+-    case ALT('W'):
+-    case KEY_DC:
+     case KEY_F(7):
+-    case 0x7F: /* found on a sun */
++    case 'y':
+       copy_region();
+       break;
+ 
+-    case CTRL('Y'):
+-    case KEY_IC:
+     case KEY_F(8):
++    case 'p':
+       yank();
+       break;
+ 
+-    case ALT('Y'):
+     case KEY_F(11):
++    case 'P':
+       yank_to_a_file();
+       break;
+ 
+     case KEY_F(12):
+-    case ALT('I'):
+       fill_with_string();
+       break;
+ 
++/*
+     case CTRL('C'):
+       quit();
+       break;
++*/
+ 
+-    case ALT('T'):
++    case CTRL('T'):
+       truncate_file();
+       break;
+ 
+-    case KEY_F(0):
+     case KEY_F(10):
+-    case CTRL('X'):
++    case 'q':
+       ask_about_save_and_quit();
+       break;
+ 
+     default:
+-      if ((key >= 256 || !setTo(key))) firstTimeHelp();
++      setTo(key);
+     }
+ 
+   return TRUE;
+@@ -544,40 +525,6 @@ static void escaped_command(void)
+   c = getch();
+   switch (c)
+   {
+-  case KEY_RIGHT:
+-  case 'f': 
+-    forward_chars();
+-    break;
+-    
+-  case KEY_LEFT:
+-  case 'b':
+-    backward_chars();
+-    break;
+-
+-  case KEY_DOWN:
+-  case 'n':
+-    next_lines();
+-    break;
+-
+-  case KEY_UP:
+-  case 'p':
+-    previous_lines();
+-    break;
+-
+-  case 'v':
+-    scroll_down();
+-    break;
+-
+-  case KEY_HOME:
+-  case '<':
+-    beginning_of_buffer();
+-    break;
+-
+-  case KEY_END:
+-  case '>':
+-    end_of_buffer();
+-    break;
+-
+   case 'l':
+     recenter();
+     break;
+@@ -586,112 +533,15 @@ static void escaped_command(void)
+     help();
+     break;
+ 
+-  case CTRL('H'):
++  case 'u':
+     delete_backward_chars();
+     break;
+ 
+-  case 'w':
+-    copy_region();
+-    break;
+-
+-  case 'y':
+-    yank_to_a_file();
+-    break;
+-
+   case 'i':
+     fill_with_string();
+     break;
+ 
+-  case 't':
+-    truncate_file();
+-    break;
+-
+-  case '':
+-    c = getch();
+-    if (c == 'O') {
+-      switch (c = getch())
+-      {
+-      case 'C': 
+-	forward_chars();
+-	break;
+-    
+-      case 'D':
+-	backward_chars();
+-	break;
+-
+-      case 'B':
+-	next_lines();
+-	break;
+-
+-      case 'A':
+-	previous_lines();
+-	break;
+-
+-      case 'H':
+-	beginning_of_buffer();
+-	break;
+-
+-      case 'F':
+-	end_of_buffer();
+-	break;
+-
+-      case 'P': /* F1 on a xterm */
+-	help();
+-	break;
+-
+-      case 'Q': /* F2 on a xterm */
+-	save_buffer();
+-	break;
+-
+-      case 'R': /* F3 on a xterm */
+-	find_file();
+-	break;
+-
+-      case 'S': /* F4 on a xterm */
+-	goto_char();
+-	break;
+-
+-      default: 
+-	firstTimeHelp();
+-      }
+-    } else firstTimeHelp();
+-    break;
+-
+-  case '[': 
+-    for (i = 0;; i++) { tmp[i] = c = getch(); if (!isdigit(c)) break; }
+-    tmp[i + 1] = '\0';
+-    
+-    if (0);
+-    else if (streq(tmp, "2~")) yank();
+-    else if (streq(tmp, "5~")) scroll_down();
+-    else if (streq(tmp, "6~")) scroll_up();
+-    else if (streq(tmp, "7~")) beginning_of_buffer();
+-    else if (streq(tmp, "8~")) end_of_buffer();
+-    else if (streq(tmp, "010q" /* F10 on a sgi's winterm */)) ask_about_save_and_quit();
+-    else if (streq(tmp, "193z")) fill_with_string();
+-    else if (streq(tmp, "214z")) beginning_of_line();
+-    else if (streq(tmp, "216z")) scroll_down();
+-    else if (streq(tmp, "220z")) end_of_line();
+-    else if (streq(tmp, "222z")) scroll_up();
+-    else if (streq(tmp, "233z")) ask_about_save_and_quit();
+-    else if (streq(tmp, "234z" /* F11 on a sun */)) yank_to_a_file();
+-    else if (streq(tmp, "247z")) yank();
+-    else if (streq(tmp, "11~" /* F1 on a rxvt */)) help();
+-    else if (streq(tmp, "12~" /* F2 on a rxvt */)) save_buffer();
+-    else if (streq(tmp, "13~" /* F3 on a rxvt */)) find_file();
+-    else if (streq(tmp, "14~" /* F4 on a rxvt */)) goto_char();
+-    else if (streq(tmp, "15~" /* F5 on a rxvt */)) scroll_down();
+-    else if (streq(tmp, "17~" /* F6 on a rxvt */)) scroll_up();
+-    else if (streq(tmp, "18~" /* F7 on a rxvt */)) copy_region();
+-    else if (streq(tmp, "19~" /* F8 on a rxvt */)) yank();
+-    else if (streq(tmp, "20~" /* F9 on a rxvt */)) set_mark_command();
+-    else if (streq(tmp, "21~" /* F10 on a rxvt */)) ask_about_save_and_quit();
+-    else if (streq(tmp, "23~" /* F11 on a rxvt */)) yank_to_a_file();
+-    else if (streq(tmp, "24~" /* F12 on a rxvt */)) fill_with_string();
+-    else firstTimeHelp();
+-    break;
+-
+   default:
+-    firstTimeHelp();
++    break;
+   }
+ }

@@ -1,0 +1,173 @@
+--- hexedit.1.orig	2013-10-16 19:53:41.767347073 +0200
++++ hexedit.1	2013-10-16 20:08:07.625795201 +0200
+@@ -19,119 +19,64 @@ Try to maximize the display.
+ .TP
+ .I "\-h, \-\-help"
+ Show the usage.
+-.SH COMMANDS (quickly)
++.SH COMMANDS
+ .SS Moving
+ .nf
+-<, > :  go to start/end of the file
+-Right:  next character
+-Left:   previous character
+-Down:   next line
+-Up:     previous line
+-Home:   beginning of line
+-End:    end of line
+-PUp:    page forward
+-PDown:  page backward
++Left, Right, Up, Down,
++h, l, k, j:	left, right, up, down
++g, G:		start/end of the file
++
++W:		next 4 bytes
++B:		previous 4 bytes
++CTRL-n:		next 4 lines
++CTRL-p:		previous 4 lines
++
++^, |, CTRL-a:	beginning of line
++$, CTRL-e:	end of line
++
++PUp, CTRL-u:	page forward
++PDown, CTRL-d:	page backward
++
++CTRL-g, F4:	go to position in hex
++
++Tab:		toggle hex/ascii
+ .fi
+-.SS Miscellaneous
++.SS Editing
+ .nf
+-F2:     save
+-F3:     load file
+-F1:     help
+-Ctrl-L: redraw
+-Ctrl-Z: suspend
+-Ctrl-X: save and exit
+-Ctrl-C: exit without saving
+-
+-Tab:    toggle hex/ascii
+-Return: go to
+-Backspace: undo previous character
+-Ctrl-U: undo all
+-Ctrl-S: search forward
+-Ctrl-R: search backward
++CTRL-w, F2:	save
++q, F10:		save and exit
++CTRL-o, F3:	open another file
++
++u:		undo previous character
++ESC-u:		undo the previous 4 bytes
++U:		undo all
++
++CTRL-q:		read next input character and insert it verbatim (this is useful for inserting control characters and bound keys)
++CTRL-t:		truncate the file at the current location
++ESC-i, F12:	fill the selection with a string
++
++v, F9:		start selection
++y, F7:		copy
++p, F8:		paste
++P, F11:		paste into a file
+ .fi
+-.SS Cut&Paste
++.SS Miscellaneous
+ .nf
+-Ctrl-Space: set mark
+-Esc-W:  copy
+-Ctrl-Y: paste
+-Esc-Y:  paste into a file
+-Esc-I:  fill
++CTRL-l:		redraw
++CTRL-z:		suspend
++
++F1, ESC-h:	help
++
++CTRL-c:		exit without saving
++
++/, n:		search forward
++?, N:		search backward
++
++CTRL-l:		refresh the display
++ESC-l:		display the page starting at the current cursor position
++
++CTRL-[:		escape command
+ .fi
+-.SH COMMANDS (full and detailed)
+-o \fIRight-Arrow\fR, \fILeft-Arrow\fR, \fIDown-Arrow\fR, \fIUp-Arrow\fR \- move the cursor.
+-.br
+-o \fICtrl+F\fR, \fICtrl+B\fR, \fICtrl+N\fR, \fICtrl+P\fR \- move the cursor.
+-.br
+-o \fICtrl+Right-Arrow\fR, \fICtrl+Left-Arrow\fR, \fICtrl+Down-Arrow\fR, \fICtrl+Up-Arrow\fR \- move n times the cursor.
+-.br
+-o \fIEsc+Right-Arrow\fR, \fIEsc+Left-Arrow\fR, \fIEsc+Down-Arrow\fR, \fIEsc+Up-Arrow\fR \- move n times the cursor.
+-.br
+-o \fIEsc+F\fR, \fIEsc+B\fR, \fIEsc+N\fR, \fIEsc+P\fR \- move n times the cursor.
+-.br
+-o \fIHome\fR, \fICtrl+A\fR \- go the beginning of the line.
+-.br
+-o \fIEnd\fR, \fICtrl+E\fR \- go to the end of the line.
+-.br
+-o \fIPage up\fR, \fIEsc+V\fR, \fIF5\fR \- go up in the file by one page.
+-.br
+-o \fIPage down\fR, \fICtrl+V\fR, \fIF6\fR \- go down in the file by one page.
+-.br
+-o \fI<\fR, \fIEsc+<\fR, \fIEsc+Home\fR \- go to the beginning of the file.
+-.br
+-o \fI>\fR, \fIEsc+>\fR, \fIEsc+End\fR \- go to the end of the file (for regular files that have a size).
+-.br
+-o \fICtrl+Z\fR \- suspend hexedit.
+-.br
+-o \fICtrl+U\fR, \fICtrl+_\fR, \fICtrl+/\fR \- undo all (forget the modifications).
+-.br
+-o \fICtrl+Q\fR \- read next input character and insert it (this is useful for
+-inserting control characters and bound keys).
+-.br
+-o \fITab\fR, \fICtrl+T\fR \- toggle between ASCII and hexadecimal.
+-.br
+-o \fI/\fR, \fICtrl+S\fR \- search forward (in ASCII or in hexadecimal, use \fITAB\fR to change).
+-.br
+-o \fICtrl+R\fR \- search backward.
+-.br
+-o \fICtrl+G\fR, \fIF4\fR \- go to a position in the file.
+-.br
+-o \fIReturn\fR \- go to a sector in the file if \fI\-\-sector\fR is used, otherwise go
+-to a position in the file.
+-.br
+-o \fIEsc+L\fR \- display the page starting at the current cursor position.
+-.br
+-o \fIF2\fR, \fICtrl+W\fR \- save the modifications.
+-.br
+-o \fIF1\fR, \fIEsc+H\fR \- help (show the man page).
+-.br
+-o \fICtrl+O\fR, \fIF3\fR \- open another file
+-.br
+-o \fICtrl+L\fR \- redisplay (refresh) the display (usefull when your terminal screws up).
+-.br
+-o \fIBackspace\fR, \fICtrl+H\fR \- undo the modifications made on the previous byte.
+-.br
+-o \fIEsc+Ctrl+H\fR \- undo the modifications made on the previous bytes.
+-.br
+-o \fICtrl+Space\fR, \fIF9\fR \- set mark where cursor is.
+-.br
+-o \fIEsc+W\fR, \fIDelete\fR, \fIF7\fR \- copy selected region.
+-.br
+-o \fICtrl+Y\fR, \fIInsert\fR, \fIF8\fR \- paste (yank) previously copied region.
+-.br
+-o \fIEsc+Y\fR, \fIF11\fR \- save previously copied region to a file.
+-.br
+-o \fIEsc+I\fR, \fIF12\fR \- fill the selection with a string
+-.br
+-o \fIEsc+T\fR \- truncate the file at the current location
+-.br
+-o \fICtrl+C\fR \- unconditional quit (without saving).
+-.br
+-o \fIF10\fR, \fICtrl+X\fR \- quit.
+-.PP
+-For the \fIEsc\fR commands, it sometimes works to use \fIAlt\fR instead of
+-\fIEsc\fR. Funny things here (especially for froggies :) egrave = Alt+H ,
+-ccedilla = Alt+G, Alt+Y = ugrave.
+-.br
+ .SS Modeline
+ At the bottom of the display you have the modeline (copied from emacs). As in
+ emacs, you have the indications --, ** and %% meaning unmodified, modified and

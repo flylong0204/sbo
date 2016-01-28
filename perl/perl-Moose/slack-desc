@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+          |-----handy-ruler------------------------------------------------------|
+perl-Moose: perl-Moose (postmodern object system for Perl 5)
+perl-Moose:
+perl-Moose: Moose is an extension of the Perl 5 object system.
+perl-Moose: The main goal of Moose is to make Perl 5 Object Oriented programming
+perl-Moose: easier, more consistent, and less tedious. With Moose you can think
+perl-Moose: more about what you want to do and less about the mechanics of OOP.
+perl-Moose: Additionally, Moose is built on top of Class::MOP, which is a
+perl-Moose: metaclass system for Perl 5. This means that Moose not only makes
+perl-Moose: building normal Perl 5 objects better, but it provides the power of
+perl-Moose: metaclass programming as well.
+perl-Moose: Homepage: http://search.cpan.org/dist/Moose/

@@ -19,3 +19,6 @@
 *.jar
 *~
 .directory
+*.build
+*.sbopkg
+*.orig

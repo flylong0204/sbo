@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+                 |-----handy-ruler------------------------------------------------------|
+perl-Eval-Closure: perl-Eval-Closure (safely and cleanly create closures via string eval)
+perl-Eval-Closure:
+perl-Eval-Closure: String eval is often used for dynamic code generation. For instance,
+perl-Eval-Closure: Moose uses it heavily, to generate inlined versions of accessors and
+perl-Eval-Closure: constructors, which speeds code up at runtime by a significant amount.
+perl-Eval-Closure:
+perl-Eval-Closure: Homepage: http://search.cpan.org/dist/Eval-Closure/
+perl-Eval-Closure:
+perl-Eval-Closure:
+perl-Eval-Closure:
+perl-Eval-Closure:

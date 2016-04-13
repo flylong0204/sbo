@@ -387,3 +387,290 @@ diff -Naur opal-3.10.10-orig/plugins/video/common/ffmpeg/libavcodec/avcodec.h op
 
  #if FF_API_OLD_SAMPLE_FMT
  /**
+--- ./plugins/video/common/dyna.cxx.orig	2016-04-13 11:59:52.975733897 +0200
++++ ./plugins/video/common/dyna.cxx	2016-04-13 12:00:41.079531893 +0200
+@@ -213,11 +213,11 @@ static void logCallbackFFMPEG(void * avc
+ FFMPEGLibrary::FFMPEGLibrary(AVCodecID codec)
+ {
+   m_codec = codec;
+-  if (m_codec==CODEC_ID_H264)
++  if (m_codec==AV_CODEC_ID_H264)
+       snprintf( m_codecString, sizeof(m_codecString), "H264");
+-  if (m_codec==CODEC_ID_H263P)
++  if (m_codec==AV_CODEC_ID_H263P)
+       snprintf( m_codecString, sizeof(m_codecString), "H263+");
+-  if (m_codec==CODEC_ID_MPEG4)
++  if (m_codec==AV_CODEC_ID_MPEG4)
+       snprintf( m_codecString, sizeof(m_codecString), "MPEG4");
+   m_isLoadedOK = false;
+ }
+--- ./plugins/video/H.263-1998/h263-1998.cxx.orig	2016-04-13 11:59:26.340845746 +0200
++++ ./plugins/video/H.263-1998/h263-1998.cxx	2016-04-13 11:59:40.671785565 +0200
+@@ -98,7 +98,7 @@ static struct StdSizes {
+   { CIF16_WIDTH, CIF16_HEIGHT, PLUGINCODEC_CIF16_MPI },
+ };
+ 
+-static FFMPEGLibrary FFMPEGLibraryInstance(CODEC_ID_H263P);
++static FFMPEGLibrary FFMPEGLibraryInstance(AV_CODEC_ID_H263P);
+ 
+ 
+ /////////////////////////////////////////////////////////////////////////////
+@@ -587,7 +587,7 @@ void H263_RFC2190_EncoderContext::RTPCal
+ 
+ bool H263_RFC2190_EncoderContext::Init()
+ {
+-  if (!H263_Base_EncoderContext::Init(CODEC_ID_H263))
++  if (!H263_Base_EncoderContext::Init(AV_CODEC_ID_H263))
+     return false;
+ 
+ #if LIBAVCODEC_RTP_MODE
+@@ -624,7 +624,7 @@ H263_RFC2429_EncoderContext::~H263_RFC24
+ 
+ bool H263_RFC2429_EncoderContext::Init()
+ {
+-  return H263_Base_EncoderContext::Init(CODEC_ID_H263P);
++  return H263_Base_EncoderContext::Init(AV_CODEC_ID_H263P);
+ }
+ 
+ 
+@@ -648,7 +648,7 @@ H263_Base_DecoderContext::H263_Base_Deco
+   if (!FFMPEGLibraryInstance.Load())
+     return;
+ 
+-  if ((m_codec = FFMPEGLibraryInstance.AvcodecFindDecoder(CODEC_ID_H263)) == NULL) {
++  if ((m_codec = FFMPEGLibraryInstance.AvcodecFindDecoder(AV_CODEC_ID_H263)) == NULL) {
+     PTRACE(1, m_prefix, "Codec not found for decoder");
+     return;
+   }
+--- ./plugins/video/H.263-1998/h263-1998.cxx.orig	2016-04-13 12:54:12.354911004 +0200
++++ ./plugins/video/H.263-1998/h263-1998.cxx	2016-04-13 12:54:21.865103771 +0200
+@@ -238,7 +238,7 @@ bool H263_Base_EncoderContext::Init(AVCo
+                    | CODEC_FLAG_TRUNCATED  // Possible missing packets
+                    ;
+ 
+-  m_context->pix_fmt = PIX_FMT_YUV420P;
++  m_context->pix_fmt = AV_PIX_FMT_YUV420P;
+   m_context->gop_size = H263_KEY_FRAME_INTERVAL;
+ 
+   // X-Lite does not like Custom Picture frequency clocks... stick to 29.97Hz
+--- ./plugins/video/common/ffmpeg/libavutil/pixfmt.h.orig	2016-04-13 12:55:48.680739203 +0200
++++ ./plugins/video/common/ffmpeg/libavutil/pixfmt.h	2016-04-13 12:56:52.008473193 +0200
+@@ -58,82 +58,82 @@
+  *       this allows simpler detection of big vs little endian.
+  */
+ enum PixelFormat {
+-    PIX_FMT_NONE= -1,
+-    PIX_FMT_YUV420P,   ///< planar YUV 4:2:0, 12bpp, (1 Cr & Cb sample per 2x2 Y samples)
+-    PIX_FMT_YUYV422,   ///< packed YUV 4:2:2, 16bpp, Y0 Cb Y1 Cr
+-    PIX_FMT_RGB24,     ///< packed RGB 8:8:8, 24bpp, RGBRGB...
+-    PIX_FMT_BGR24,     ///< packed RGB 8:8:8, 24bpp, BGRBGR...
+-    PIX_FMT_YUV422P,   ///< planar YUV 4:2:2, 16bpp, (1 Cr & Cb sample per 2x1 Y samples)
+-    PIX_FMT_YUV444P,   ///< planar YUV 4:4:4, 24bpp, (1 Cr & Cb sample per 1x1 Y samples)
+-    PIX_FMT_YUV410P,   ///< planar YUV 4:1:0,  9bpp, (1 Cr & Cb sample per 4x4 Y samples)
+-    PIX_FMT_YUV411P,   ///< planar YUV 4:1:1, 12bpp, (1 Cr & Cb sample per 4x1 Y samples)
+-    PIX_FMT_GRAY8,     ///<        Y        ,  8bpp
+-    PIX_FMT_MONOWHITE, ///<        Y        ,  1bpp, 0 is white, 1 is black, in each byte pixels are ordered from the msb to the lsb
+-    PIX_FMT_MONOBLACK, ///<        Y        ,  1bpp, 0 is black, 1 is white, in each byte pixels are ordered from the msb to the lsb
+-    PIX_FMT_PAL8,      ///< 8 bit with PIX_FMT_RGB32 palette
+-    PIX_FMT_YUVJ420P,  ///< planar YUV 4:2:0, 12bpp, full scale (JPEG), deprecated in favor of PIX_FMT_YUV420P and setting color_range
+-    PIX_FMT_YUVJ422P,  ///< planar YUV 4:2:2, 16bpp, full scale (JPEG), deprecated in favor of PIX_FMT_YUV422P and setting color_range
+-    PIX_FMT_YUVJ444P,  ///< planar YUV 4:4:4, 24bpp, full scale (JPEG), deprecated in favor of PIX_FMT_YUV444P and setting color_range
+-    PIX_FMT_XVMC_MPEG2_MC,///< XVideo Motion Acceleration via common packet passing
+-    PIX_FMT_XVMC_MPEG2_IDCT,
+-    PIX_FMT_UYVY422,   ///< packed YUV 4:2:2, 16bpp, Cb Y0 Cr Y1
+-    PIX_FMT_UYYVYY411, ///< packed YUV 4:1:1, 12bpp, Cb Y0 Y1 Cr Y2 Y3
+-    PIX_FMT_BGR8,      ///< packed RGB 3:3:2,  8bpp, (msb)2B 3G 3R(lsb)
+-    PIX_FMT_BGR4,      ///< packed RGB 1:2:1 bitstream,  4bpp, (msb)1B 2G 1R(lsb), a byte contains two pixels, the first pixel in the byte is the one composed by the 4 msb bits
+-    PIX_FMT_BGR4_BYTE, ///< packed RGB 1:2:1,  8bpp, (msb)1B 2G 1R(lsb)
+-    PIX_FMT_RGB8,      ///< packed RGB 3:3:2,  8bpp, (msb)2R 3G 3B(lsb)
+-    PIX_FMT_RGB4,      ///< packed RGB 1:2:1 bitstream,  4bpp, (msb)1R 2G 1B(lsb), a byte contains two pixels, the first pixel in the byte is the one composed by the 4 msb bits
+-    PIX_FMT_RGB4_BYTE, ///< packed RGB 1:2:1,  8bpp, (msb)1R 2G 1B(lsb)
+-    PIX_FMT_NV12,      ///< planar YUV 4:2:0, 12bpp, 1 plane for Y and 1 plane for the UV components, which are interleaved (first byte U and the following byte V)
+-    PIX_FMT_NV21,      ///< as above, but U and V bytes are swapped
+-
+-    PIX_FMT_ARGB,      ///< packed ARGB 8:8:8:8, 32bpp, ARGBARGB...
+-    PIX_FMT_RGBA,      ///< packed RGBA 8:8:8:8, 32bpp, RGBARGBA...
+-    PIX_FMT_ABGR,      ///< packed ABGR 8:8:8:8, 32bpp, ABGRABGR...
+-    PIX_FMT_BGRA,      ///< packed BGRA 8:8:8:8, 32bpp, BGRABGRA...
+-
+-    PIX_FMT_GRAY16BE,  ///<        Y        , 16bpp, big-endian
+-    PIX_FMT_GRAY16LE,  ///<        Y        , 16bpp, little-endian
+-    PIX_FMT_YUV440P,   ///< planar YUV 4:4:0 (1 Cr & Cb sample per 1x2 Y samples)
+-    PIX_FMT_YUVJ440P,  ///< planar YUV 4:4:0 full scale (JPEG), deprecated in favor of PIX_FMT_YUV440P and setting color_range
+-    PIX_FMT_YUVA420P,  ///< planar YUV 4:2:0, 20bpp, (1 Cr & Cb sample per 2x2 Y & A samples)
+-    PIX_FMT_VDPAU_H264,///< H.264 HW decoding with VDPAU, data[0] contains a vdpau_render_state struct which contains the bitstream of the slices as well as various fields extracted from headers
+-    PIX_FMT_VDPAU_MPEG1,///< MPEG-1 HW decoding with VDPAU, data[0] contains a vdpau_render_state struct which contains the bitstream of the slices as well as various fields extracted from headers
+-    PIX_FMT_VDPAU_MPEG2,///< MPEG-2 HW decoding with VDPAU, data[0] contains a vdpau_render_state struct which contains the bitstream of the slices as well as various fields extracted from headers
+-    PIX_FMT_VDPAU_WMV3,///< WMV3 HW decoding with VDPAU, data[0] contains a vdpau_render_state struct which contains the bitstream of the slices as well as various fields extracted from headers
+-    PIX_FMT_VDPAU_VC1, ///< VC-1 HW decoding with VDPAU, data[0] contains a vdpau_render_state struct which contains the bitstream of the slices as well as various fields extracted from headers
+-    PIX_FMT_RGB48BE,   ///< packed RGB 16:16:16, 48bpp, 16R, 16G, 16B, the 2-byte value for each R/G/B component is stored as big-endian
+-    PIX_FMT_RGB48LE,   ///< packed RGB 16:16:16, 48bpp, 16R, 16G, 16B, the 2-byte value for each R/G/B component is stored as little-endian
+-
+-    PIX_FMT_RGB565BE,  ///< packed RGB 5:6:5, 16bpp, (msb)   5R 6G 5B(lsb), big-endian
+-    PIX_FMT_RGB565LE,  ///< packed RGB 5:6:5, 16bpp, (msb)   5R 6G 5B(lsb), little-endian
+-    PIX_FMT_RGB555BE,  ///< packed RGB 5:5:5, 16bpp, (msb)1A 5R 5G 5B(lsb), big-endian, most significant bit to 0
+-    PIX_FMT_RGB555LE,  ///< packed RGB 5:5:5, 16bpp, (msb)1A 5R 5G 5B(lsb), little-endian, most significant bit to 0
+-
+-    PIX_FMT_BGR565BE,  ///< packed BGR 5:6:5, 16bpp, (msb)   5B 6G 5R(lsb), big-endian
+-    PIX_FMT_BGR565LE,  ///< packed BGR 5:6:5, 16bpp, (msb)   5B 6G 5R(lsb), little-endian
+-    PIX_FMT_BGR555BE,  ///< packed BGR 5:5:5, 16bpp, (msb)1A 5B 5G 5R(lsb), big-endian, most significant bit to 1
+-    PIX_FMT_BGR555LE,  ///< packed BGR 5:5:5, 16bpp, (msb)1A 5B 5G 5R(lsb), little-endian, most significant bit to 1
+-
+-    PIX_FMT_VAAPI_MOCO, ///< HW acceleration through VA API at motion compensation entry-point, Picture.data[3] contains a vaapi_render_state struct which contains macroblocks as well as various fields extracted from headers
+-    PIX_FMT_VAAPI_IDCT, ///< HW acceleration through VA API at IDCT entry-point, Picture.data[3] contains a vaapi_render_state struct which contains fields extracted from headers
+-    PIX_FMT_VAAPI_VLD,  ///< HW decoding through VA API, Picture.data[3] contains a vaapi_render_state struct which contains the bitstream of the slices as well as various fields extracted from headers
+-
+-    PIX_FMT_YUV420P16LE,  ///< planar YUV 4:2:0, 24bpp, (1 Cr & Cb sample per 2x2 Y samples), little-endian
+-    PIX_FMT_YUV420P16BE,  ///< planar YUV 4:2:0, 24bpp, (1 Cr & Cb sample per 2x2 Y samples), big-endian
+-    PIX_FMT_YUV422P16LE,  ///< planar YUV 4:2:2, 32bpp, (1 Cr & Cb sample per 2x1 Y samples), little-endian
+-    PIX_FMT_YUV422P16BE,  ///< planar YUV 4:2:2, 32bpp, (1 Cr & Cb sample per 2x1 Y samples), big-endian
+-    PIX_FMT_YUV444P16LE,  ///< planar YUV 4:4:4, 48bpp, (1 Cr & Cb sample per 1x1 Y samples), little-endian
+-    PIX_FMT_YUV444P16BE,  ///< planar YUV 4:4:4, 48bpp, (1 Cr & Cb sample per 1x1 Y samples), big-endian
+-    PIX_FMT_VDPAU_MPEG4,  ///< MPEG4 HW decoding with VDPAU, data[0] contains a vdpau_render_state struct which contains the bitstream of the slices as well as various fields extracted from headers
+-    PIX_FMT_DXVA2_VLD,    ///< HW decoding through DXVA2, Picture.data[3] contains a LPDIRECT3DSURFACE9 pointer
+-
+-    PIX_FMT_RGB444BE,  ///< packed RGB 4:4:4, 16bpp, (msb)4A 4R 4G 4B(lsb), big-endian, most significant bits to 0
+-    PIX_FMT_RGB444LE,  ///< packed RGB 4:4:4, 16bpp, (msb)4A 4R 4G 4B(lsb), little-endian, most significant bits to 0
+-    PIX_FMT_BGR444BE,  ///< packed BGR 4:4:4, 16bpp, (msb)4A 4B 4G 4R(lsb), big-endian, most significant bits to 1
+-    PIX_FMT_BGR444LE,  ///< packed BGR 4:4:4, 16bpp, (msb)4A 4B 4G 4R(lsb), little-endian, most significant bits to 1
+-    PIX_FMT_Y400A,     ///< 8bit gray, 8bit alpha
+-    PIX_FMT_NB,        ///< number of pixel formats, DO NOT USE THIS if you want to link with shared libav* because the number of formats might differ between versions
++    AV_PIX_FMT_NONE= -1,
++    AV_PIX_FMT_YUV420P,   ///< planar YUV 4:2:0, 12bpp, (1 Cr & Cb sample per 2x2 Y samples)
++    AV_PIX_FMT_YUYV422,   ///< packed YUV 4:2:2, 16bpp, Y0 Cb Y1 Cr
++    AV_PIX_FMT_RGB24,     ///< packed RGB 8:8:8, 24bpp, RGBRGB...
++    AV_PIX_FMT_BGR24,     ///< packed RGB 8:8:8, 24bpp, BGRBGR...
++    AV_PIX_FMT_YUV422P,   ///< planar YUV 4:2:2, 16bpp, (1 Cr & Cb sample per 2x1 Y samples)
++    AV_PIX_FMT_YUV444P,   ///< planar YUV 4:4:4, 24bpp, (1 Cr & Cb sample per 1x1 Y samples)
++    AV_PIX_FMT_YUV410P,   ///< planar YUV 4:1:0,  9bpp, (1 Cr & Cb sample per 4x4 Y samples)
++    AV_PIX_FMT_YUV411P,   ///< planar YUV 4:1:1, 12bpp, (1 Cr & Cb sample per 4x1 Y samples)
++    AV_PIX_FMT_GRAY8,     ///<        Y        ,  8bpp
++    AV_PIX_FMT_MONOWHITE, ///<        Y        ,  1bpp, 0 is white, 1 is black, in each byte pixels are ordered from the msb to the lsb
++    AV_PIX_FMT_MONOBLACK, ///<        Y        ,  1bpp, 0 is black, 1 is white, in each byte pixels are ordered from the msb to the lsb
++    AV_PIX_FMT_PAL8,      ///< 8 bit with PIX_FMT_RGB32 palette
++    AV_PIX_FMT_YUVJ420P,  ///< planar YUV 4:2:0, 12bpp, full scale (JPEG), deprecated in favor of PIX_FMT_YUV420P and setting color_range
++    AV_PIX_FMT_YUVJ422P,  ///< planar YUV 4:2:2, 16bpp, full scale (JPEG), deprecated in favor of PIX_FMT_YUV422P and setting color_range
++    AV_PIX_FMT_YUVJ444P,  ///< planar YUV 4:4:4, 24bpp, full scale (JPEG), deprecated in favor of PIX_FMT_YUV444P and setting color_range
++    AV_PIX_FMT_XVMC_MPEG2_MC,///< XVideo Motion Acceleration via common packet passing
++    AV_PIX_FMT_XVMC_MPEG2_IDCT,
++    AV_PIX_FMT_UYVY422,   ///< packed YUV 4:2:2, 16bpp, Cb Y0 Cr Y1
++    AV_PIX_FMT_UYYVYY411, ///< packed YUV 4:1:1, 12bpp, Cb Y0 Y1 Cr Y2 Y3
++    AV_PIX_FMT_BGR8,      ///< packed RGB 3:3:2,  8bpp, (msb)2B 3G 3R(lsb)
++    AV_PIX_FMT_BGR4,      ///< packed RGB 1:2:1 bitstream,  4bpp, (msb)1B 2G 1R(lsb), a byte contains two pixels, the first pixel in the byte is the one composed by the 4 msb bits
++    AV_PIX_FMT_BGR4_BYTE, ///< packed RGB 1:2:1,  8bpp, (msb)1B 2G 1R(lsb)
++    AV_PIX_FMT_RGB8,      ///< packed RGB 3:3:2,  8bpp, (msb)2R 3G 3B(lsb)
++    AV_PIX_FMT_RGB4,      ///< packed RGB 1:2:1 bitstream,  4bpp, (msb)1R 2G 1B(lsb), a byte contains two pixels, the first pixel in the byte is the one composed by the 4 msb bits
++    AV_PIX_FMT_RGB4_BYTE, ///< packed RGB 1:2:1,  8bpp, (msb)1R 2G 1B(lsb)
++    AV_PIX_FMT_NV12,      ///< planar YUV 4:2:0, 12bpp, 1 plane for Y and 1 plane for the UV components, which are interleaved (first byte U and the following byte V)
++    AV_PIX_FMT_NV21,      ///< as above, but U and V bytes are swapped
++
++    AV_PIX_FMT_ARGB,      ///< packed ARGB 8:8:8:8, 32bpp, ARGBARGB...
++    AV_PIX_FMT_RGBA,      ///< packed RGBA 8:8:8:8, 32bpp, RGBARGBA...
++    AV_PIX_FMT_ABGR,      ///< packed ABGR 8:8:8:8, 32bpp, ABGRABGR...
++    AV_PIX_FMT_BGRA,      ///< packed BGRA 8:8:8:8, 32bpp, BGRABGRA...
++
++    AV_PIX_FMT_GRAY16BE,  ///<        Y        , 16bpp, big-endian
++    AV_PIX_FMT_GRAY16LE,  ///<        Y        , 16bpp, little-endian
++    AV_PIX_FMT_YUV440P,   ///< planar YUV 4:4:0 (1 Cr & Cb sample per 1x2 Y samples)
++    AV_PIX_FMT_YUVJ440P,  ///< planar YUV 4:4:0 full scale (JPEG), deprecated in favor of PIX_FMT_YUV440P and setting color_range
++    AV_PIX_FMT_YUVA420P,  ///< planar YUV 4:2:0, 20bpp, (1 Cr & Cb sample per 2x2 Y & A samples)
++    AV_PIX_FMT_VDPAU_H264,///< H.264 HW decoding with VDPAU, data[0] contains a vdpau_render_state struct which contains the bitstream of the slices as well as various fields extracted from headers
++    AV_PIX_FMT_VDPAU_MPEG1,///< MPEG-1 HW decoding with VDPAU, data[0] contains a vdpau_render_state struct which contains the bitstream of the slices as well as various fields extracted from headers
++    AV_PIX_FMT_VDPAU_MPEG2,///< MPEG-2 HW decoding with VDPAU, data[0] contains a vdpau_render_state struct which contains the bitstream of the slices as well as various fields extracted from headers
++    AV_PIX_FMT_VDPAU_WMV3,///< WMV3 HW decoding with VDPAU, data[0] contains a vdpau_render_state struct which contains the bitstream of the slices as well as various fields extracted from headers
++    AV_PIX_FMT_VDPAU_VC1, ///< VC-1 HW decoding with VDPAU, data[0] contains a vdpau_render_state struct which contains the bitstream of the slices as well as various fields extracted from headers
++    AV_PIX_FMT_RGB48BE,   ///< packed RGB 16:16:16, 48bpp, 16R, 16G, 16B, the 2-byte value for each R/G/B component is stored as big-endian
++    AV_PIX_FMT_RGB48LE,   ///< packed RGB 16:16:16, 48bpp, 16R, 16G, 16B, the 2-byte value for each R/G/B component is stored as little-endian
++
++    AV_PIX_FMT_RGB565BE,  ///< packed RGB 5:6:5, 16bpp, (msb)   5R 6G 5B(lsb), big-endian
++    AV_PIX_FMT_RGB565LE,  ///< packed RGB 5:6:5, 16bpp, (msb)   5R 6G 5B(lsb), little-endian
++    AV_PIX_FMT_RGB555BE,  ///< packed RGB 5:5:5, 16bpp, (msb)1A 5R 5G 5B(lsb), big-endian, most significant bit to 0
++    AV_PIX_FMT_RGB555LE,  ///< packed RGB 5:5:5, 16bpp, (msb)1A 5R 5G 5B(lsb), little-endian, most significant bit to 0
++
++    AV_PIX_FMT_BGR565BE,  ///< packed BGR 5:6:5, 16bpp, (msb)   5B 6G 5R(lsb), big-endian
++    AV_PIX_FMT_BGR565LE,  ///< packed BGR 5:6:5, 16bpp, (msb)   5B 6G 5R(lsb), little-endian
++    AV_PIX_FMT_BGR555BE,  ///< packed BGR 5:5:5, 16bpp, (msb)1A 5B 5G 5R(lsb), big-endian, most significant bit to 1
++    AV_PIX_FMT_BGR555LE,  ///< packed BGR 5:5:5, 16bpp, (msb)1A 5B 5G 5R(lsb), little-endian, most significant bit to 1
++
++    AV_PIX_FMT_VAAPI_MOCO, ///< HW acceleration through VA API at motion compensation entry-point, Picture.data[3] contains a vaapi_render_state struct which contains macroblocks as well as various fields extracted from headers
++    AV_PIX_FMT_VAAPI_IDCT, ///< HW acceleration through VA API at IDCT entry-point, Picture.data[3] contains a vaapi_render_state struct which contains fields extracted from headers
++    AV_PIX_FMT_VAAPI_VLD,  ///< HW decoding through VA API, Picture.data[3] contains a vaapi_render_state struct which contains the bitstream of the slices as well as various fields extracted from headers
++
++    AV_PIX_FMT_YUV420P16LE,  ///< planar YUV 4:2:0, 24bpp, (1 Cr & Cb sample per 2x2 Y samples), little-endian
++    AV_PIX_FMT_YUV420P16BE,  ///< planar YUV 4:2:0, 24bpp, (1 Cr & Cb sample per 2x2 Y samples), big-endian
++    AV_PIX_FMT_YUV422P16LE,  ///< planar YUV 4:2:2, 32bpp, (1 Cr & Cb sample per 2x1 Y samples), little-endian
++    AV_PIX_FMT_YUV422P16BE,  ///< planar YUV 4:2:2, 32bpp, (1 Cr & Cb sample per 2x1 Y samples), big-endian
++    AV_PIX_FMT_YUV444P16LE,  ///< planar YUV 4:4:4, 48bpp, (1 Cr & Cb sample per 1x1 Y samples), little-endian
++    AV_PIX_FMT_YUV444P16BE,  ///< planar YUV 4:4:4, 48bpp, (1 Cr & Cb sample per 1x1 Y samples), big-endian
++    AV_PIX_FMT_VDPAU_MPEG4,  ///< MPEG4 HW decoding with VDPAU, data[0] contains a vdpau_render_state struct which contains the bitstream of the slices as well as various fields extracted from headers
++    AV_PIX_FMT_DXVA2_VLD,    ///< HW decoding through DXVA2, Picture.data[3] contains a LPDIRECT3DSURFACE9 pointer
++
++    AV_PIX_FMT_RGB444BE,  ///< packed RGB 4:4:4, 16bpp, (msb)4A 4R 4G 4B(lsb), big-endian, most significant bits to 0
++    AV_PIX_FMT_RGB444LE,  ///< packed RGB 4:4:4, 16bpp, (msb)4A 4R 4G 4B(lsb), little-endian, most significant bits to 0
++    AV_PIX_FMT_BGR444BE,  ///< packed BGR 4:4:4, 16bpp, (msb)4A 4B 4G 4R(lsb), big-endian, most significant bits to 1
++    AV_PIX_FMT_BGR444LE,  ///< packed BGR 4:4:4, 16bpp, (msb)4A 4B 4G 4R(lsb), little-endian, most significant bits to 1
++    AV_PIX_FMT_Y400A,     ///< 8bit gray, 8bit alpha
++    AV_PIX_FMT_NB,        ///< number of pixel formats, DO NOT USE THIS if you want to link with shared libav* because the number of formats might differ between versions
+ };
+ 
+ #if AV_HAVE_BIGENDIAN
+--- ./plugins/video/MPEG4-ffmpeg/mpeg4.cxx.orig	2016-04-13 12:58:15.832120956 +0200
++++ ./plugins/video/MPEG4-ffmpeg/mpeg4.cxx	2016-04-13 12:58:30.768058200 +0200
+@@ -540,7 +540,7 @@ void MPEG4EncoderContext::ResetBitCounte
+ //
+ 
+ void MPEG4EncoderContext::SetStaticEncodingParams(){
+-    m_avcontext->pix_fmt = PIX_FMT_YUV420P;
++    m_avcontext->pix_fmt = AV_PIX_FMT_YUV420P;
+     m_avcontext->mb_decision = FF_MB_DECISION_SIMPLE;    // high quality off
+     m_avcontext->rtp_payload_size = 750;                 // ffh263 uses 750
+     m_avcontext->rtp_callback = &MPEG4EncoderContext::RtpCallback;
+--- ./plugins/video/MPEG4-ffmpeg/mpeg4.cxx.orig	2016-04-13 13:03:28.066808924 +0200
++++ ./plugins/video/MPEG4-ffmpeg/mpeg4.cxx	2016-04-13 13:03:38.547764871 +0200
+@@ -206,7 +206,7 @@ const static struct mpeg4_resolution {
+     { 0 }
+ };
+ 
+-FFMPEGLibrary FFMPEGLibraryInstance(CODEC_ID_MPEG4);
++FFMPEGLibrary FFMPEGLibraryInstance(AV_CODEC_ID_MPEG4);
+ 
+ 
+ static bool mpeg4IsIframe (BYTE * frameBuffer, unsigned int frameLen )
+@@ -704,7 +704,7 @@ bool MPEG4EncoderContext::OpenCodec()
+     return false;
+   }
+ 
+-  if((m_avcodec = FFMPEGLibraryInstance.AvcodecFindEncoder(CODEC_ID_MPEG4)) == NULL){
++  if((m_avcodec = FFMPEGLibraryInstance.AvcodecFindEncoder(AV_CODEC_ID_MPEG4)) == NULL){
+     PTRACE(1, "MPEG4", "Encoder not found");
+     return false;
+   }
+@@ -1395,7 +1395,7 @@ void MPEG4DecoderContext::ResizeDecoding
+ 
+ bool MPEG4DecoderContext::OpenCodec()
+ {
+-    if ((m_avcodec = FFMPEGLibraryInstance.AvcodecFindDecoder(CODEC_ID_MPEG4)) == NULL) {
++    if ((m_avcodec = FFMPEGLibraryInstance.AvcodecFindDecoder(AV_CODEC_ID_MPEG4)) == NULL) {
+         PTRACE(1, "MPEG4", "Decoder not found for encoder");
+         return false;
+     }
+--- ./plugins/video/H.264/h264-x264.cxx.orig	2016-04-13 13:03:56.458689613 +0200
++++ ./plugins/video/H.264/h264-x264.cxx	2016-04-13 13:04:04.734654842 +0200
+@@ -107,7 +107,7 @@ static struct PluginCodec_information Li
+ 
+ ///////////////////////////////////////////////////////////////////////////////
+ 
+-FFMPEGLibrary FFMPEGLibraryInstance(CODEC_ID_H264);
++FFMPEGLibrary FFMPEGLibraryInstance(AV_CODEC_ID_H264);
+ 
+ PLUGINCODEC_CONTROL_LOG_FUNCTION_DEF
+ 
+@@ -1067,7 +1067,7 @@ class MyDecoder : public PluginCodec<MY_
+          allows you to fail the create operation (return false), which cannot
+          be done in the normal C++ constructor. */
+ 
+-      if ((m_codec = FFMPEGLibraryInstance.AvcodecFindDecoder(CODEC_ID_H264)) == NULL)
++      if ((m_codec = FFMPEGLibraryInstance.AvcodecFindDecoder(AV_CODEC_ID_H264)) == NULL)
+         return false;
+ 
+       if ((m_context = FFMPEGLibraryInstance.AvcodecAllocContext()) == NULL)

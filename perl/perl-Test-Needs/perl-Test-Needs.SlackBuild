@@ -5,7 +5,7 @@
 # Written by LEVAI Daniel <leva@ecentrum.hu>
 
 PRGNAM=perl-Test-Needs
-VERSION=${VERSION:-0.002004}
+VERSION=${VERSION:-0.002005}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 

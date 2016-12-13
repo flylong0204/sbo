@@ -28,7 +28,7 @@
 # Build script for the Linux port of OpenBSD's ksh
 
 PRGNAM=ksh-openbsd
-VERSION=${VERSION:-20161023}
+VERSION=${VERSION:-20161213}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 
